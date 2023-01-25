@@ -1,0 +1,22 @@
+{
+  "name": "using-tmdb",
+  "version": "1.0.0",
+  "description": "Web application using \"The Movie DataBase\"",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drestharx/using-TMDB.git"
+  },
+  "keywords": [
+    "javascript"
+  ],
+  "author": "dresthar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/drestharx/using-TMDB/issues"
+  },
+  "homepage": "https://github.com/drestharx/using-TMDB#readme"
+}
