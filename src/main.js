@@ -1,10 +1,22 @@
+//AXIOS
+const api = axios.create({
+    baseURL: 'https://api.themoviedb.org/3',
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+    },
+    params: {
+        'api_key': apiKey,
+    },
+});
+
 const url = 'https://api.themoviedb.org/3';
 const mediaType = 'movie';
-const timeWindow = 'week';
+const timeWindow = 'day';
+
+//TRENDING SECTION
 
 async function getTrendingMoviesPreview() {
-    const response = await fetch(`${url}/trending/${mediaType}/${timeWindow}?api_key=${apiKey}`);
-    const data = await response.json();
+    const { data } = await api(`/trending/${mediaType}/${timeWindow}`);
     const movies = data.results;
 
     console.log('movies', movies);
@@ -23,4 +35,26 @@ async function getTrendingMoviesPreview() {
     });
 }
 
-getTrendingMoviesPreview();
+
+//CATEGORIES SECTION
+
+async function getCategoriesMoviesPreview() {
+    const { data } = await api(`/genre/movie/list`);
+    const categories = data.genres;
+
+    console.log('categories', categories);
+
+    categories.forEach(category => {
+        const categorySection = document.querySelector('#categoriesPreview .categoriesPreview-list');
+        const div = document.createElement('div');
+        const h3 = document.createElement('h3');
+
+        div.classList.add('category-container');
+        h3.setAttribute('id', 'id' + category.id);
+        h3.classList.add('category-title');
+        h3.textContent = `${category.name}`;
+
+        div.appendChild(h3);
+        categorySection.appendChild(div);
+    });
+}
