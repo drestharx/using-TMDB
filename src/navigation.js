@@ -28,6 +28,8 @@ function navigator() {
     } else {
         homePage();
     }
+
+    smoothscroll();
 }
 
 function homePage() {
@@ -121,8 +123,10 @@ function categoriesPage() {
     const [, categoryData] = location.hash.split('=');
 
     const [id, name] = categoryData.split('-');
+    
+    const movieName = name.split('%20').join(' ');
 
     const categoryId = parseInt(id);
 
-    getMoviesByCategories(categoryId, name);
+    getMoviesByCategories(categoryId, movieName);
 }
