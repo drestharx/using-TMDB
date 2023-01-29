@@ -92,7 +92,11 @@ function searchPage() {
 
     const [, query0] = location.hash.split('=');
 
-    const query = query0.split('%20').join('');
+    console.log(query0);
+
+    const query = query0.split('%20').join(' ');
+
+    console.log('query mandado', query)
 
     getMoviesBySearch(query);
 }
@@ -115,6 +119,7 @@ function moviePage() {
     const [, movieId] = location.hash.split('=');
 
     getMovieById(movieId);
+    getSimilarMovies(movieId);
 }
 
 function categoriesPage() {

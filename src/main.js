@@ -65,7 +65,6 @@ function smoothscroll(){
     }
 };
 
-
 //TRENDING SECTION
 
 async function getTrendingMoviesPreview() {
@@ -156,6 +155,15 @@ async function getMovieById(id) {
         url(${posterImg})
     `;
 
+}
 
-    createMovies(movie.genres, relatedMoviesContainer);
+//GET SIMILAR MOVIES
+async function getSimilarMovies(id) {
+    const { data } = await api(`/movie/${id}/similar`);
+
+    const similarMovies = data.results;
+
+    createMovies(similarMovies, relatedMoviesContainer);
+
+    relatedMoviesContainer.scrollLeft = 0;
 }
