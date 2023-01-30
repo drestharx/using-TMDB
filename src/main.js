@@ -13,8 +13,8 @@ const url = 'https://api.themoviedb.org/3';
 const mediaType = 'movie';
 const timeWindow = 'day';
 
-//Utils
-function createMovies(movies, container) {
+//UTILS
+function createMovies(movies, container, lazyLoad = false) {
     container.innerText = '';
 
     movies.forEach(movie => {
@@ -28,7 +28,15 @@ function createMovies(movies, container) {
         div.classList.add('movie-container');
         img.classList.add('movie-img');
         img.setAttribute('alt', movie.title);
-        img.setAttribute('src', `https://image.tmdb.org/t/p/w300${movie.poster_path}`);
+        //se modifica el atributo src para el lazy loading
+        img.setAttribute(
+            lazyLoad ? 'data' : 'src',
+            `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+        );
+
+        if(lazyLoad) {
+            lazyLoading.observe(img);
+        }
 
         div.appendChild(img);
         container.appendChild(div);
@@ -56,6 +64,22 @@ function createCategories(categories, container) {
     });
 }
 
+//INTERSECTION OBSERVER (LAZY LOADER)
+const lazyLoading = new IntersectionObserver((entries) => {
+    console.log('entries obervados', {entries})
+    entries.forEach((entry) => {
+        //cada entry hace referencia a cada elemento que ya este siendo observado, porlo tanto deben ser activados
+
+        //LAZY LOADING
+        if(entry.isIntersecting) {
+            const url = entry.target.getAttribute('data');
+            entry.target.setAttribute('src', url);
+            lazyLoading.unobserve(entry.target);
+        }
+    });
+});
+
+
 //scroll top function
 function smoothscroll(){
     const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
@@ -73,7 +97,7 @@ async function getTrendingMoviesPreview() {
 
     console.log('movies', movies);
 
-    createMovies(movies, trendingMoviesPreviewList);
+    createMovies(movies, trendingMoviesPreviewList, true);
 }
 
 //CATEGORIES SECTION
