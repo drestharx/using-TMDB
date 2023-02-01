@@ -9,13 +9,14 @@ const api = axios.create({
     },
 });
 
-const url = 'https://api.themoviedb.org/3';
 const mediaType = 'movie';
 const timeWindow = 'day';
 
 //UTILS
-function createMovies(movies, container, lazyLoad = false) {
-    container.innerText = '';
+function createMovies(movies, container, { lazyLoad = false, clean = true } = {}) {
+    if(clean) {
+        container.innerText = '';
+    }
 
     movies.forEach(movie => {
         const div = document.createElement('div');
@@ -33,6 +34,11 @@ function createMovies(movies, container, lazyLoad = false) {
             lazyLoad ? 'data' : 'src',
             `https://image.tmdb.org/t/p/w300${movie.poster_path}`
         );
+
+        img.addEventListener('error', () => {
+            img.setAttribute('src', 'https://img.freepik.com/vector-gratis/ups-error-404-ilustracion-concepto-robot-roto_114360-5529.jpg?w=2000');
+        });
+
 
         if(lazyLoad) {
             lazyLoading.observe(img);
@@ -85,7 +91,7 @@ function smoothscroll(){
     const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
     if (currentScroll > 0) {
         window.requestAnimationFrame(smoothscroll);
-        window.scrollTo(0,currentScroll - (currentScroll/5));
+        window.scrollTo(0, currentScroll - (currentScroll / 5));
     }
 };
 
@@ -126,7 +132,7 @@ async function getMoviesByCategories(id, name) {
 
     headerCategoryTitle.textContent = name;
 
-    createMovies(movies, genericSection);
+    createMovies(movies, genericSection, true);
 }
 
 //SEARCH MOVIES BY SEARCH
@@ -152,9 +158,52 @@ async function getTrendingMovies() {
     const { data } = await api(`/trending/${mediaType}/${timeWindow}`);
     const movies = data.results;
 
-    console.log('movies', movies);
+    maxPage = data.total_pages;
+    console.log('pages', maxPage);
 
-    createMovies(movies, genericSection);
+    createMovies(movies, genericSection, {lazyLoad: true, clean: true});
+
+    // const getMoreButton = document.createElement('button');
+    // getMoreButton.textContent = 'Cargar mas videos';
+    // getMoreButton.addEventListener('click', getPaginatedTrendingMovies)
+    // genericSection.appendChild(getMoreButton);
+}
+
+//PAGINATED MOVIES
+
+async function getPaginatedTrendingMovies() {
+
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = document.documentElement;
+
+    const isScrollEnd = (scrollTop + clientHeight) >= (scrollHeight - 15);
+
+    const isMaxPage = pagination <= maxPage;
+
+    if(isScrollEnd && isMaxPage) {
+
+        console.log('llegaste al final de la pagina');
+
+        pagination += 1;
+
+        const { data } = await api(`/trending/${mediaType}/${timeWindow}`, {
+            params: {
+                page: pagination,
+            },
+        });
+
+        console.log(data);
+    
+        createMovies(data.results, genericSection, {lazyLoad: true, clean: false});
+    }
+
+    // const getMoreButton = document.createElement('button');
+    // getMoreButton.textContent = 'Cargar mas videos';
+    // getMoreButton.addEventListener('click', getPaginatedTrendingMovies)
+    // genericSection.appendChild(getMoreButton);
 }
 
 //GET MOVIE + DETAILS
@@ -178,6 +227,8 @@ async function getMovieById(id) {
         ),
         url(${posterImg})
     `;
+
+    createCategories(movie.genres, movieDetailCategoriesList, true);
 
 }
 
