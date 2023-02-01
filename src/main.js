@@ -130,9 +130,43 @@ async function getMoviesByCategories(id, name) {
 
     const movies = data.results;
 
+    maxPage = data.total_pages;
+
     headerCategoryTitle.textContent = name;
 
-    createMovies(movies, genericSection, true);
+    createMovies(movies, genericSection, { lazyLoad: true, clean: true });
+}
+
+function getPaginatedMoviesById(id) {
+    return async function() {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement;
+    
+        const isScrollEnd = (scrollTop + clientHeight) >= (scrollHeight - 15);
+    
+        const isMaxPage = pagination <= maxPage;
+    
+        if(isScrollEnd && isMaxPage) {
+    
+            console.log('llegaste al final de la pagina');
+    
+            pagination += 1;
+    
+            const { data } = await api(`/discover/movie`, {
+                params: {
+                    page: pagination,
+                    with_genres: id,
+                },
+            });
+    
+            console.log(data);
+        
+            createMovies(data.results, genericSection, {lazyLoad: true, clean: false});
+        }
+    } 
 }
 
 //SEARCH MOVIES BY SEARCH
@@ -147,9 +181,45 @@ async function getMoviesBySearch(query) {
 
     const movies = data.results;
 
+    maxPage = data.total_pages;
+
+    console.log('max pages', maxPage)
+
     console.log('movies by search', movies);
 
     createMovies(movies, genericSection);
+}
+
+function getPaginatedMoviesBySearch(query) {
+    return async function() {
+        const {
+            scrollTop,
+            scrollHeight,
+            clientHeight
+        } = document.documentElement;
+    
+        const isScrollEnd = (scrollTop + clientHeight) >= (scrollHeight - 15);
+    
+        const isMaxPage = pagination <= maxPage;
+    
+        if(isScrollEnd && isMaxPage) {
+    
+            console.log('llegaste al final de la pagina');
+    
+            pagination += 1;
+    
+            const { data } = await api(`/search/movie`, {
+                params: {
+                    page: pagination,
+                    query: query,
+                },
+            });
+    
+            console.log(data);
+        
+            createMovies(data.results, genericSection, {lazyLoad: true, clean: false});
+        }
+    } 
 }
 
 //TRENDING MOVIES SECTION

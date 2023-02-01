@@ -22,6 +22,8 @@ window.addEventListener('scroll', infiniteScroll, false);
 
 
 function navigator() {
+
+    pagination = 1;
     
     if(infiniteScroll) {
         window.removeEventListener('scroll', infiniteScroll, { passive: false });
@@ -117,6 +119,8 @@ function searchPage() {
     console.log('query mandado', query)
 
     getMoviesBySearch(query);
+
+    infiniteScroll = getPaginatedMoviesBySearch(query);
 }
 
 function moviePage() {
@@ -169,4 +173,6 @@ function categoriesPage() {
     const categoryId = parseInt(id);
 
     getMoviesByCategories(categoryId, movieName);
+
+    infiniteScroll = getPaginatedMoviesById(categoryId);
 }
