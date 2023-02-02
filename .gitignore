@@ -103,5 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# Secrets API.js
-src/sec.js
+# # Secrets API.js
+# src/sec.js
