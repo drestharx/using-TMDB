@@ -6,11 +6,43 @@ const api = axios.create({
     },
     params: {
         'api_key': apiKey,
+        'language': lang || 'es',
     },
 });
 
 const mediaType = 'movie';
 const timeWindow = 'day';
+
+//DATA
+function likedMoviesList() {
+    const localList = JSON.parse(localStorage.getItem('liked_movies'));
+
+    let movies;
+
+    if(localList) {
+        movies = localList;
+    } else {
+        movies = {};
+    }
+
+    return movies;
+}
+
+function likedMovie(movie) {
+    const likedMovies = likedMoviesList();
+
+    console.log(likedMovies);
+
+    if(likedMovies[movie.id]) {
+        likedMovies[movie.id] = undefined;
+    } else {
+        likedMovies[movie.id] = movie;
+    }
+
+    const jsonMovie = JSON.stringify(likedMovies);
+
+    localStorage.setItem('liked_movies', jsonMovie);
+}
 
 //UTILS
 function createMovies(movies, container, { lazyLoad = false, clean = true } = {}) {
@@ -39,12 +71,25 @@ function createMovies(movies, container, { lazyLoad = false, clean = true } = {}
             img.setAttribute('src', 'https://img.freepik.com/vector-gratis/ups-error-404-ilustracion-concepto-robot-roto_114360-5529.jpg?w=2000');
         });
 
+        const favBtn = document.createElement('button');
+        favBtn.classList.add('movie-btn');
+
+        likedMoviesList()[movie.id] && favBtn.classList.add('movie-btn__liked');
+
+        favBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            favBtn.classList.toggle('movie-btn__liked');
+
+            likedMovie(movie);
+            getLikedMovies();
+        });
 
         if(lazyLoad) {
             lazyLoading.observe(img);
         }
 
         div.appendChild(img);
+        div.appendChild(favBtn);
         container.appendChild(div);
     });
 }
@@ -85,7 +130,6 @@ const lazyLoading = new IntersectionObserver((entries) => {
     });
 });
 
-
 //scroll top function
 function smoothscroll(){
     const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
@@ -101,7 +145,9 @@ async function getTrendingMoviesPreview() {
     const { data } = await api(`/trending/${mediaType}/${timeWindow}`);
     const movies = data.results;
 
-    console.log('movies', movies);
+    console.log('trendig movies', movies);
+
+    trendingPreviewTitle.textContent = languages[lang].trendingsPreviewsTitle;
 
     createMovies(movies, trendingMoviesPreviewList, true);
 }
@@ -114,6 +160,10 @@ async function getCategoriesMoviesPreview() {
     const categories = data.genres;
 
     console.log('categories', categories);
+
+    const categoriesTitle = document.querySelector('.categoriesPreview-title');
+
+    categoriesTitle.textContent = languages[lang].categoriesTit;
 
     createCategories(categories, categoriesPreviewList);
 }
@@ -232,11 +282,6 @@ async function getTrendingMovies() {
     console.log('pages', maxPage);
 
     createMovies(movies, genericSection, {lazyLoad: true, clean: true});
-
-    // const getMoreButton = document.createElement('button');
-    // getMoreButton.textContent = 'Cargar mas videos';
-    // getMoreButton.addEventListener('click', getPaginatedTrendingMovies)
-    // genericSection.appendChild(getMoreButton);
 }
 
 //PAGINATED MOVIES
@@ -269,11 +314,6 @@ async function getPaginatedTrendingMovies() {
     
         createMovies(data.results, genericSection, {lazyLoad: true, clean: false});
     }
-
-    // const getMoreButton = document.createElement('button');
-    // getMoreButton.textContent = 'Cargar mas videos';
-    // getMoreButton.addEventListener('click', getPaginatedTrendingMovies)
-    // genericSection.appendChild(getMoreButton);
 }
 
 //GET MOVIE + DETAILS
@@ -311,4 +351,15 @@ async function getSimilarMovies(id) {
     createMovies(similarMovies, relatedMoviesContainer);
 
     relatedMoviesContainer.scrollLeft = 0;
+}
+
+//GET FROM LOCAL STORAGE
+function getLikedMovies() {
+    const likedMovies = likedMoviesList();
+
+    const moviesArray = Object.values(likedMovies);
+
+    favoritesTitle.textContent = languages[lang].favouritesTitle;
+
+    createMovies(moviesArray, favoritesMoviesListArticle, { lazyLoad: true, clean: true });
 }

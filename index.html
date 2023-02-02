@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -20,10 +20,10 @@
     <header id="header" class="header-container">
         <span class="header-arrow inactive">&lt;</span>
         <h1 class="header-title">Let's see Movies</h1>
-        <h1 class="header-title header-title--categoryView inactive">Acción</h1>
+        <h1 class="header-title header-title--categoryView inactive"></h1>
 
         <form id="searchForm" class="header-searchForm">
-            <input type="text" placeholder="Vengadores" />
+            <input id="searchForm__input" type="text" placeholder="Search" />
             <button id="searchBtn">🔍</button>
         </form>
     </header>
@@ -43,12 +43,30 @@
 
     <section id="favorites-section" class="favorites-container">
         <div class="favorite__header">
-            <h2 class="favorites__title"></h2>
+            <h2 class="favorites__title">Your favorites</h2>
         </div>
 
         <article class="favorites__movie-list">
             <div class="movie-container">
-                <img src="" alt="" class="movie-img">
+                <img
+                src="https://image.tmdb.org/t/p/w300/sv1xJUazXeYqALzczSZ3O6nkH75.jpg"
+                alt="Imagen de error"
+                class="movie-img"
+                />
+            </div>
+            <div class="movie-container">
+                <img
+                src="https://image.tmdb.org/t/p/w300/sv1xJUazXeYqALzczSZ3O6nkH75.jpg"
+                alt="Imagen de error"
+                class="movie-img"
+                />
+            </div>
+            <div class="movie-container">
+                <img
+                src="https://image.tmdb.org/t/p/w300/sv1xJUazXeYqALzczSZ3O6nkH75.jpg"
+                alt="Imagen de error"
+                class="movie-img"
+                />
             </div>
         </article>
     </section>
@@ -72,7 +90,7 @@
 
     <section id="movieDetail" class="movieDetail-container inactive">
         <h1 class="movieDetail-title"></h1>
-        <span class="movieDetail-score">x</span>
+        <span class="movieDetail-score"></span>
         <p class="movieDetail-description"></p>
 
         <article class="categories-list">
@@ -93,6 +111,7 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./src/lang.js"></script>
     <script src="./src/sec.js"></script>
     <script src="./src/nodes.js"></script>
     <script src="./src/main.js"></script>
